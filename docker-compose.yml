@@ -1,0 +1,29 @@
+version: '3.7'
+
+services:
+  postgresDB:
+    image: postgres
+    container_name: gql-pg
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USERNAME}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DATABASE}
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+
+  app:
+    container_name: gql-app
+    build: .
+    env_file: .env
+    depends_on:
+      - postgresDB
+    ports:
+      - 3333:3333
+    volumes:
+      - .:/usr/app
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '10m'
+        max-file: '1'
